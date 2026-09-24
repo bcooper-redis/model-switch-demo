@@ -1,12 +1,14 @@
 # Milestone 4 service setup
 
+For current installation and demo steps, use the [SA install and run guide](install-and-run.md). The Context Retriever section below is planning guidance, not a working app feature.
+
 Credentials belong in the existing root `.env`, never in chat or frontend settings. Copy the new blank entries from `.env.example`; preserve your existing values. LangCache is wired only to the fixed example in the evidence panel; it becomes callable after credentials are added and the app is restarted. Context Retriever integration still needs implementation and live schema/access verification.
 
 ## LangCache
 
 1. Open Redis Cloud → LangCache → create a service named `model-switch-demo-cache`. Use a dedicated cache for this demo.
 2. Choose an eligible database and complete the embedding/provider settings offered by your account.
-3. Add these five custom attributes, exactly: `task`, `prompt_version`, `provider`, `model`, `settings`.
+3. Before creating the service, add these five custom attributes, exactly: `task`, `prompt_version`, `provider`, `model`, `settings`.
 4. Save the service API key when displayed. Copy the API base URL and cache ID from its configuration.
 5. Populate:
 
@@ -16,7 +18,7 @@ LANGCACHE_CACHE_ID='<cache-id>'
 LANGCACHE_API_KEY='<service-api-key>'
 ```
 
-The intended cache demo uses only fixed, non-personal example tasks. Normal personal chats and private chats bypass it. Attribute scoping and a one-hour TTL will be validated before enabling cache reuse.
+The cache demo uses only fixed, non-personal example tasks. Normal personal chats and private chats bypass it. Live testing passed for bypass, miss/store, and exact repeat hits. Entries use a one-hour TTL. Rephrased questions may miss at the strict match threshold. Attributes cannot be added after service creation; create a replacement service if they are missing.
 
 Official instructions: [Create a LangCache service](https://redis.io/docs/latest/operate/rc/langcache/create-service/), [API authentication and attributes](https://redis.io/docs/latest/develop/ai/context-engine/langcache/api-examples/).
 
