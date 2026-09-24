@@ -26,7 +26,28 @@ This is a local, single-user demo without login controls. Keep it bound to local
 
 ## 2. Install the tools and clone the project
 
-Install Git, Node.js, and uv if they are missing. Use the [Git installers](https://git-scm.com/downloads), [Node.js downloads](https://nodejs.org/en/download), and [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/). Node's installer includes npm. The frontend uses Vite; see its [Node.js requirements](https://vite.dev/guide/).
+### Install the tools on macOS
+
+Open **Terminal**. If Git, Node.js, npm, and uv are already installed, skip to the version checks below.
+
+These commands use Homebrew. If `brew --version` works, skip the Homebrew install command. Otherwise, run the [official Homebrew installer](https://brew.sh/) and follow its prompts:
+
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+When the installer finishes, run the **Next steps** commands it prints to add Homebrew to your shell. Then install the tools:
+
+```sh
+brew install git node@22 uv
+```
+
+Homebrew keeps Node 22 in its own folder. For the default macOS shell, zsh, run this once to make it available in this terminal and future terminals:
+
+```sh
+printf '\nexport PATH="%s/bin:$PATH"\n' "$(brew --prefix node@22)" >> "$HOME/.zshrc"
+export PATH="$(brew --prefix node@22)/bin:$PATH"
+```
 
 Check your tools:
 
@@ -37,17 +58,33 @@ npm --version
 uv --version
 ```
 
-Clone the project into a folder where you keep demos:
+Node should report version 22.12 or later in the Node 22 release line. npm comes with Node. References: [Node 22 package](https://formulae.brew.sh/formula/node@22) and [uv installation](https://docs.astral.sh/uv/getting-started/installation/).
+
+### Download the project and install Python packages
+
+The commands below download the [GitHub repository](https://github.com/bcooper-redis/model-switch-demo) into **`~/redis-demos/model-switch-demo`** on your computer. The `~` means your home folder. This local folder is created by `git clone`; it is not a separate download link.
+
+For a new installation, copy and run this block:
 
 ```sh
+mkdir -p "$HOME/redis-demos"
+cd "$HOME/redis-demos"
 git clone https://github.com/bcooper-redis/model-switch-demo.git
-cd model-switch-demo
+cd "$HOME/redis-demos/model-switch-demo"
 uv python install 3.12
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -r requirements.lock
 ```
 
-Run the remaining commands from this `model-switch-demo` folder unless a step says otherwise. You do not need to activate the Python environment; the commands use its Python directly.
+If you already cloned the project elsewhere, use that existing folder instead. Do not create a second copy just to follow this guide. Replace `$HOME/redis-demos/model-switch-demo` in later commands with your actual path.
+
+Each project command block below includes the folder change it needs. You do not need to activate the Python environment; `.venv/bin/python` runs the project's Python directly.
+
+To open the project folder in Finder on macOS:
+
+```sh
+open "$HOME/redis-demos/model-switch-demo"
+```
 
 ## 3. Set up Redis Cloud and Agent Memory
 
@@ -85,11 +122,18 @@ Copy the service's API base URL, store ID, and API key. Save the key when it is 
 For a new checkout only:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 cp .env.example .env
 chmod 600 .env
 ```
 
-Open `.env` in your text editor. Keep it in the project root, beside `README.md`. Do not repeat the copy command after adding credentials because it would overwrite them.
+Open `.env` in your text editor. On macOS, this command opens it in TextEdit:
+
+```sh
+open -a TextEdit "$HOME/redis-demos/model-switch-demo/.env"
+```
+
+Keep `.env` in the project root, beside `README.md`. Do not repeat the copy command after adding credentials because it would overwrite them.
 
 Fill in these required settings:
 
@@ -123,6 +167,7 @@ For the first run, leave Anthropic, LangCache, and Context Retriever credentials
 Build the browser UI:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 cd frontend
 npm ci
 npm run build
@@ -132,6 +177,7 @@ cd ..
 Run the automated tests:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 .venv/bin/python -m pytest -q
 ```
 
@@ -140,6 +186,7 @@ The test suite requires the `.env` fields from step 4 to be present, even though
 Check the required live connections:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 .venv/bin/python scripts/milestone0.py connect
 ```
 
@@ -152,6 +199,7 @@ This check does not test Claude, Ollama, LangCache, or background extraction. Te
 Start the app and memory worker together:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 .venv/bin/python scripts/run.py
 ```
 
@@ -171,6 +219,7 @@ Press **Ctrl+C** in the app terminal to stop both processes. Run the same start 
 If port 8765 is busy, stop your previous app instance first. To deliberately use another port:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 DEMO_PORT=8766 .venv/bin/python scripts/run.py
 ```
 
@@ -216,6 +265,7 @@ First, make sure another Ollama server is not using port 11434. Quit the Ollama 
 Download the runtime from the project root:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 mkdir -p .artifacts
 curl -fL https://github.com/ollama/ollama/releases/download/v0.17.7/ollama-darwin.tgz -o .artifacts/ollama-stable.tgz
 shasum -a 256 .artifacts/ollama-stable.tgz
@@ -230,6 +280,7 @@ a87a5d78825f91aee334020c868fba6c470da4e2bf21578d2ae1e36bb184ef35
 Stop if it differs. If it matches, extract and start the runtime:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 mkdir -p .artifacts/ollama-0.17.7
 tar -xzf .artifacts/ollama-stable.tgz -C .artifacts/ollama-0.17.7
 .venv/bin/python scripts/local_runtime.py serve
@@ -238,6 +289,7 @@ tar -xzf .artifacts/ollama-stable.tgz -C .artifacts/ollama-0.17.7
 Leave that terminal open. In a second terminal, change to the project root and download the model:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 .venv/bin/python scripts/local_runtime.py pull qwen3:4b-instruct
 .venv/bin/python scripts/local_runtime.py list
 ```
@@ -346,6 +398,7 @@ When asking for help, include the step, error type, tool versions, and whether t
 Stop the app first. From the project root:
 
 ```sh
+cd "$HOME/redis-demos/model-switch-demo"
 git pull --ff-only
 uv pip install --python .venv/bin/python -r requirements.lock
 cd frontend
