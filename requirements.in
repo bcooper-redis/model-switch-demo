@@ -1,0 +1,9 @@
+redisvl[langcache]==0.27.2
+redis-agent-memory==0.4.1
+openai==3.16.2
+redis==8.1.0
+python-dotenv==1.2.3
+pytest==9.1.1
+fastapi==0.141.1
+uvicorn==0.53.0
+httpx==0.28.1

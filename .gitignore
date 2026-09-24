@@ -1,0 +1,38 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+dist/
+.DS_Store
+.artifacts/
+
+# Local credentials and private demo inputs/exports
+*.pem
+*.key
+uploads/
+exports/
+private/
+*_Personal_and_Professional_Profile.*
+shared-context-export*.json
+
+# Python tooling and build output
+*.py[cod]
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+
+# Runtime logs, editor files, and temporary files
+*.log
+*.pid
+*.swp
+*.swo
+*.tmp
+.idea/
+.vscode/

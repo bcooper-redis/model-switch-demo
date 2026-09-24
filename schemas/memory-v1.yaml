@@ -1,0 +1,24 @@
+# Version 1 application-owned HASH projection. Probe overrides name/prefix.
+# Changing embedding model or dimensions requires a new index and re-embedding.
+index:
+  name: model-switch-memory-v1
+  prefix: model-switch-demo:memory:v1
+  storage_type: hash
+fields:
+  - name: owner_id
+    type: tag
+  - name: status
+    type: tag
+  - name: category
+    type: tag
+  - name: text
+    type: text
+  - name: revision
+    type: numeric
+  - name: embedding
+    type: vector
+    attrs:
+      algorithm: flat
+      dims: 1536
+      datatype: float32
+      distance_metric: cosine

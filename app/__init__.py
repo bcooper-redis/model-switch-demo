@@ -1,0 +1,1 @@
+"""Local shared-context demonstration."""
